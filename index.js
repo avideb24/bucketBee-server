@@ -31,10 +31,16 @@ async function run() {
     const blogCollection = client.db("BucketBee").collection("blogs");
     const wishlistCollection = client.db("BucketBee").collection("wishlist");
 
-    // user post
+    // users post
     app.post('/users', async(req, res) => {
       const user = req.body;
       const result = await usersCollection.insertOne(user);
+      res.send(result);
+    })
+
+    // users get
+    app.get('/users', async(req, res) => {
+      const result = await usersCollection.find().toArray();
       res.send(result);
     })
 

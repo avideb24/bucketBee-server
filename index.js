@@ -102,6 +102,12 @@ async function run() {
       res.send(result);
     })
 
+    // comments get
+    app.get('/comments', async(req, res) => {
+      const result = await commentCollection.find().toArray();
+      res.send(result);
+    })
+
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });

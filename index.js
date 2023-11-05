@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const port = process.env.PORT || 5000;
 
 const app = express();
@@ -27,14 +27,22 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
 
+    const usersCollection = client.db("BucketBee").collection("users");
     const blogCollection = client.db("BucketBee").collection("blogs");
     const wishlistCollection = client.db("BucketBee").collection("wishlist");
 
+    // user post
+    app.post('/users', async(req, res) => {
+      const user = req.body;
+      const result = await usersCollection.insertOne(user);
+      res.send(result);
+    })
+
     // blog add
     app.post('/blogs', async(req, res)=> {
-      const {title, photo, shortDescription, longDescription, category } = req.body;
+      const {title, photo, shortDescription, longDescription, category,  userName, userPhoto } = req.body;
       const timeStamp = new Date();
-      const blog = {title, photo, shortDescription, longDescription, category, date: timeStamp };
+      const blog = {title, photo, shortDescription, longDescription, category, userName, userPhoto,  date: timeStamp };
       // console.log(blog);
       const result = await blogCollection.insertOne(blog);
       res.send(result);
@@ -44,6 +52,14 @@ async function run() {
     app.get('/blogs', async(req, res)=> {
       const result = await blogCollection.find().toArray();
       res.send(result);
+    })
+
+    // single blog get
+    app.get('/blogs/:id', async(req, res)=> {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id)};
+      const result = await blogCollection.findOne(query);
+      res.send(result)
     })
     
     // wishlist add

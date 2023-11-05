@@ -28,6 +28,7 @@ async function run() {
     await client.connect();
 
     const blogCollection = client.db("BucketBee").collection("blogs");
+    const wishlistCollection = client.db("BucketBee").collection("wishlist");
 
     // blog add
     app.post('/blogs', async(req, res)=> {
@@ -45,6 +46,26 @@ async function run() {
       res.send(result);
     })
     
+    // wishlist add
+    app.post('/wishlist', async(req, res) => {
+      const wishlistedBlog = req.body;
+      const result = await wishlistCollection.insertOne(wishlistedBlog);
+      res.send(result);
+    })
+
+    // wishlist get
+    app.get('/wishlist', async(req, res) => {
+      const result = await wishlistCollection.find().toArray();
+      res.send(result);
+    })
+
+    // wishlist delete
+    app.delete('/wishlist/:id', async(req, res) => {
+      const id = req.params.id;
+      const query = {_id: id}
+      const result = await wishlistCollection.deleteOne(query);
+      res.send(result);
+    })
 
 
 

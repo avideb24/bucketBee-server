@@ -30,6 +30,7 @@ async function run() {
     const usersCollection = client.db("BucketBee").collection("users");
     const blogCollection = client.db("BucketBee").collection("blogs");
     const wishlistCollection = client.db("BucketBee").collection("wishlist");
+    const commentCollection = client.db("BucketBee").collection("comments");
 
     // users post
     app.post('/users', async(req, res) => {
@@ -93,6 +94,13 @@ async function run() {
       res.send(result);
     })
 
+
+    // comment post
+    app.post('/comments', async(req, res) => {
+      const comment = req.body;
+      const result = await commentCollection.insertOne(comment);
+      res.send(result);
+    })
 
 
     // Send a ping to confirm a successful connection

@@ -47,9 +47,9 @@ async function run() {
 
     // blog add
     app.post('/blogs', async(req, res)=> {
-      const {title, photo, shortDescription, longDescription, category,  userName, userPhoto } = req.body;
+      const {title, photo, shortDescription, longDescription, category,  userName, userPhoto, userEmail } = req.body;
       const timeStamp = new Date();
-      const blog = {title, photo, shortDescription, longDescription, category, userName, userPhoto,  date: timeStamp };
+      const blog = {title, photo, shortDescription, longDescription, category, userName, userPhoto, userEmail, date: timeStamp };
       // console.log(blog);
       const result = await blogCollection.insertOne(blog);
       res.send(result);
@@ -59,6 +59,21 @@ async function run() {
     app.get('/blogs', async(req, res)=> {
       const result = await blogCollection.find().toArray();
       res.send(result);
+    })
+
+    // blog put
+    app.put('/blogs/:id', async(req, res)=> {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id)};
+      const {title, photo, shortDescription, longDescription, category, userName, userPhoto, userEmail} = req.body;
+      const updatedBlog = {
+        $set: {
+          title, photo, shortDescription, longDescription, category, userName, userPhoto, userEmail
+        }
+      };
+      const options = { upsert: true };
+      const result = await blogCollection.updateOne(filter, updatedBlog, options);
+      res.send(result)
     })
 
     // single blog get
